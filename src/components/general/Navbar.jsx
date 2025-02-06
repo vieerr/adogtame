@@ -30,7 +30,7 @@ const Navbar = () => {
   const [profileVisible,userInfo] = userAuthenticated();
 
   return (
-    <div className="navbar bg-base-100 border-b-[.5rem] border-b-[#356aae]">
+    <div className="navbar fixed z-10 bg-base-100 shadow-primary shadow-sm">
       <div className="flex-1">
         <Image 
           src="/logo.png"

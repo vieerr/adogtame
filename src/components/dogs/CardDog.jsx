@@ -1,15 +1,15 @@
 'use client';
 import Image from 'next/image';
+import { redirect } from 'next/navigation';
 
 const CardDog = ({ dog, isLiked, onLikeClick }) => {
     const { id, name, image, age, sexo, esterilizado } = dog;
-
     const handleSterilized = (sterilized) => {
         return sterilized ? 'Esterilizado' : 'No esterilizado';
     }
 
     return (
-        <div className="card card-compact bg-base-100 w-64 shadow-xl transition-all duration-300 hover:-translate-y-2 border-2   hover:border-blue-600">
+        <div onClick={()=>redirect(`/perros/${id}`)}  className="card card-compact bg-base-100 w-64 shadow-xl transition-all duration-300 hover:-translate-y-2 border-2   hover:border-blue-600">
             <figure className="relative w-full h-48">
                 <Image
                     src={image}
