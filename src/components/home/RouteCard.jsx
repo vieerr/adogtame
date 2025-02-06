@@ -1,14 +1,16 @@
-"use client"
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 const RouteCard = ({ data }) => {
-  const router = useRouter();
   return (
-    <div  onClick={()=>router.push(data.route)} className="cursor-pointer hover:bg-primary hover:text-primary-content card bg-primary-content transition text-primary w-96 h-32 flex justify-center items-center shadow-xl">
-      <figure>{data.icon}</figure>
-      <h2 className="card-title ">{data.title}</h2>
-    </div>
+    <Link
+      className="cursor-pointer hover:bg-primary hover:text-primary-content card bg-primary-content transition text-primary w-96 h-32 flex justify-center items-center shadow-xl"
+      href={data.route}
+    >
+      <div>
+        <figure>{data.icon}</figure>
+        <h2 className="card-title ">{data.title}</h2>
+      </div>
+    </Link>
   );
 };
-
 export default RouteCard;

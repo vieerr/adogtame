@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="en" data-theme="winter">
       <body>
         <Navbar />
-        <div className="pt-24">{children}</div>
+        <div className="pt-16">{children}</div>
       </body>
     </html>
   );
