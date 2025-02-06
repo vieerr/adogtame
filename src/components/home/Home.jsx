@@ -1,5 +1,3 @@
-import Image from "next/image";
-// import banner from "homepageBanner.jpg";
 import { PiDogFill } from "react-icons/pi";
 import { GiDogHouse } from "react-icons/gi";
 import { FaHandsHelping } from "react-icons/fa";
@@ -10,16 +8,19 @@ const Home = () => {
       id: 1,
       title: "Perros",
       icon: <PiDogFill size={65} />,
+      route: "perros",
     },
     {
       id: 2,
       title: "Rescatistas",
       icon: <FaHandsHelping size={65} />,
+      route: "rescatistas",
     },
     {
       id: 3,
       title: "Perreras",
       icon: <GiDogHouse size={65} />,
+      route: "perreras",
     },
   ];
 
