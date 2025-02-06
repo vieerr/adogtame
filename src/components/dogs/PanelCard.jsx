@@ -1,5 +1,6 @@
 'use client';
 import CardDog from './CardDog';
+import { dogs } from '@/db';
 
 const PanelCard = ({data,likedDogs,onLikeClick}) => {
     return (
