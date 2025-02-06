@@ -48,9 +48,9 @@ const CardDog = ({ dog, isLiked, onLikeClick }) => {
           </button>
         </div>
         <p>
-          {handleSterilized(esterilizado)} - {age}
+          {handleSterilized(esterilizado)} - {"7 años"}
         </p>
-        <p>{sexo}</p>
+        <p className="capitalize text-gray-500">{sexo}</p>
       </div>
     </div>
   );

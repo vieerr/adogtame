@@ -3,7 +3,7 @@ import { useState } from "react";
 import CardDog from "./CardDog";
 import { dogs } from "@/db";
 
-const PanelCard = () => {
+const PanelCard = ({data}) => {
   const [likedDogs, setLikedDogs] = useState([]);
 
   const handleLikeClick = (dogId) => {
@@ -17,7 +17,7 @@ const PanelCard = () => {
   return (
     <div className="flex justify-center p-4 pt-12">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-8 w-max items-start">
-        {dogs.map((dog) => (
+        {data.map((dog) => (
           <CardDog
             key={dog.id}
             dog={dog}

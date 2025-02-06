@@ -27,7 +27,7 @@ const DogDetails = ({ dog }) => {
             <img
               src={img}
               alt={`Perro ${index}`}
-              className="w-full h-96 object-cover rounded-lg"
+              className="w-full h-96 object-contain rounded-lg"
             />
             <div className="absolute left-5 right-5 top-1/2 transform -translate-y-1/2 flex justify-between">
               <a
