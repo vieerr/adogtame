@@ -1,7 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 const CardDog = ({ dog, isLiked, onLikeClick }) => {
-  console.log(dog);
   const { id, name, mainImg, age, sexo, esterilizado } = dog;
   const handleSterilized = (sterilized) => {
     return sterilized ? "Esterilizado" : "No esterilizado";
