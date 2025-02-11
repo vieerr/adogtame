@@ -1,9 +1,7 @@
+import EditProfileComponent from "@/components/user/dashboard/EditProfile";
+
 const EditProfile = () => {
-    return (
-        <h1>
-            Edit Profile
-        </h1>
-    );
-}
- 
+  return <EditProfileComponent/>;
+};
+
 export default EditProfile;
