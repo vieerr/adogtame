@@ -25,7 +25,7 @@ const DogFilter = () => {
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content h-full ">
         <PanelCard
-          cols={5}
+          cols={4}
           data={filteredDogs}
           likedDogs={likedDogs}
           onLikeClick={handleLikeClick}
