@@ -20,7 +20,7 @@ const UserIcon = ({userInfo}) =>{
         tabIndex={0}
         className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow">
         <li>
-          <Link href="/dashboard" className="justify-between">
+          <Link href="/dashboard/edit-profile" className="justify-between">
             Profile
             {userInfo.type === "rescuer" && <span className="badge bg-green-600 text-white"><LuBadgeCheck/> Rescuer</span>}
             {userInfo.type === "shelter" && <span className="badge bg-sky-500 text-white"><LuBadgeCheck /> Shelter</span>}
