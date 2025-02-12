@@ -3,7 +3,7 @@ import { MdVerified } from "react-icons/md";
 
 const EditProfile = () => {
   return (
-    <div className="pt-10 grid grid-cols-4 overflow-hidden ">
+    <div className="grid grid-cols-4 overflow-hidden ">
       <div className="ml-4 flex flex-col items-center col-span-1 w-full ">
         <div>
           <div className="bg-neutral text-neutral-content w-44 h-44 rounded-full flex items-center justify-center text-4xl">

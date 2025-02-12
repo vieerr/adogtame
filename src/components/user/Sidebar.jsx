@@ -66,7 +66,7 @@ const Sidebar = ({ children }) => {
             </Link>
           </li>
           <li>
-            <Link href={"/dashboard/adoption-dogs"} className="text-lg hover:bg-primary-focus hover:text-white rounded-lg ">
+            <Link href={"/dashboard/your-dogs"} className="text-lg hover:bg-primary-focus hover:text-white rounded-lg ">
               <FaStar size={20} />
               Tus perros en adopción
             </Link>
@@ -78,7 +78,7 @@ const Sidebar = ({ children }) => {
             </Link>
           </li>
           <li>
-            <Link href={"/dashboard/sponsor-dogs"} className="text-lg hover:bg-primary-focus hover:text-white rounded-lg ">
+            <Link href={"/dashboard/sponsored-dogs"} className="text-lg hover:bg-primary-focus hover:text-white rounded-lg ">
               <FaHandsHelping size={20} />
               Patrocinados
             </Link>
