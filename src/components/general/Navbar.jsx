@@ -4,25 +4,20 @@ import Image from "next/image";
 import UserIcon from "./UserIcon";
 import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
+import { user } from "@/db";
 
 const userAuthenticated = () => {
   //Method to check if the user has Logged in
   //store in "current user" variable all the user data
   //Example:
-  const currentUser = {
-    userId: 123,
-    profilePicture: "/profile_pic_dummy.webp",
-    type: "rescuer",
-    //type:"shelter"
-    //More data from the DB
-  };
+  const currentUser = user;
 
   //Return the object to be used in the component
   if (Object.keys(currentUser).length === 0) {
     return [false, {}];
   } else {
     const userInfo = {
-      profilePicture: currentUser.profilePicture,
+      pfp: currentUser.pfp,
       type: currentUser.type,
     };
     return [true, userInfo];
@@ -41,7 +36,12 @@ const Navbar = () => {
       </div>
       <div className="flex-none">
         {profileVisible ? (
-          <UserIcon userInfo={userInfo} />
+          <div className="flex items-center space-x-4 gap-10">
+            <Link href={"/perros/add-dog"} className="btn btn-secondary btn-lg text-xl">
+              Agregar Perro
+            </Link>
+            <UserIcon userInfo={userInfo} />
+          </div>
         ) : (
           <div
             tabIndex={0}
