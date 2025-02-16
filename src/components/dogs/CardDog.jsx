@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 const CardDog = ({ dog, isLiked, onLikeClick }) => {
-  const { id, name, mainImg, age, sexo, esterilizado } = dog;
+  const { _id, name, pfp, age, sexo, esterilizado } = dog;
   const handleSterilized = (sterilized) => {
     return sterilized ? "Esterilizado" : "No esterilizado";
   };
@@ -9,9 +9,9 @@ const CardDog = ({ dog, isLiked, onLikeClick }) => {
   return (
     <div className="card card-compact bg-base-100 w-64 shadow-xl transition-all duration-300 hover:-translate-y-2 border-2   hover:border-blue-600">
       <figure className="relative w-full h-48">
-        <Link href={`/perros/${id}`}>
+        <Link href={`/perros/${_id}`}>
           <Image
-            src={mainImg}
+            src={pfp}
             alt={name}
             fill
             priority
@@ -21,7 +21,7 @@ const CardDog = ({ dog, isLiked, onLikeClick }) => {
       </figure>
       <div className="card-body rounded-b-lg">
         <div className="flex items-center gap-2 w-full">
-          <Link href={`/perros/${id}`} className="card-title text-blue-600">
+          <Link href={`/perros/${_id}`} className="card-title text-blue-600">
             {name}
           </Link>
           <button

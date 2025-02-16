@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import CardDog from "./CardDog";
 
 const PanelCard = ({ data, cols }) => {
+  console.log(data);
   const [likedDogs, setLikedDogs] = useState([]);
 
   const [colsStyle, setColsStyle] = useState("grid-cols-3");
@@ -14,7 +15,7 @@ const PanelCard = ({ data, cols }) => {
   const handleLikeClick = (dogId) => {
     setLikedDogs((prevLikedDogs) =>
       prevLikedDogs.includes(dogId)
-        ? prevLikedDogs.filter((id) => id !== dogId)
+        ? prevLikedDogs.filter((_id) => _id !== dogId)
         : [...prevLikedDogs, dogId]
     );
   };
@@ -28,9 +29,9 @@ const PanelCard = ({ data, cols }) => {
       >
         {data.map((dog) => (
           <CardDog
-            key={dog.id}
+            key={dog._id}
             dog={dog}
-            isLiked={likedDogs.includes(dog.id)}
+            isLiked={likedDogs.includes(dog._id)}
             onLikeClick={handleLikeClick}
           />
         ))}

@@ -6,9 +6,6 @@ const DetailedPerro = async ({params}) => {
 
   const data = dogs.filter(dog => dog.id == id);
 
-  console.log(data);
-  console.log(id);
-
   return <DogDetails dog={data[0]} /> 
 };
 
