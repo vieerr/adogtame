@@ -1,11 +1,26 @@
 "use client";
 import { useState } from "react";
 import PanelCard from "./PanelCard";
-import { dogs } from "@/db";
+import { useQuery } from "@tanstack/react-query";
 
 const DogFilter = () => {
   const [likedDogs, setLikedDogs] = useState([]);
   const [filter, setFilter] = useState("");
+
+  // Fetch dogs using React Query
+  const {
+    data: dogs = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["dogs"],
+    queryFn: async () => {
+      const response = await fetch("http://localhost:3001/dogs");
+      if (!response.ok) throw new Error("Failed to fetch dogs");
+      return response.json();
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+  });
 
   const handleLikeClick = (dogId) => {
     setLikedDogs((prevLikedDogs) =>
@@ -19,6 +34,13 @@ const DogFilter = () => {
     if (!filter) return true;
     return dog.sexo.toLowerCase().includes(filter.toLowerCase());
   });
+
+  if (isLoading)
+    return <div className="text-center p-8">Cargando perros...</div>;
+  if (isError)
+    return (
+      <div className="text-center p-8 text-error">Error cargando perros</div>
+    );
 
   return (
     <div className="drawer lg:drawer-open">

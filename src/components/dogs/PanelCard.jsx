@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
 import CardDog from "./CardDog";
-import { dogs } from "@/db";
 
 const PanelCard = ({ data, cols }) => {
   const [likedDogs, setLikedDogs] = useState([]);
@@ -23,7 +22,9 @@ const PanelCard = ({ data, cols }) => {
   return (
     <div className="flex justify-center p-4 pt-12">
       <div
-        className={`grid grid-cols-1 ${cols? colsStyle: "grid-cols-4"} gap-10 w-max items-start`}
+        className={`grid grid-cols-1 ${
+          cols ? colsStyle : "grid-cols-4"
+        } gap-10 w-max items-start`}
       >
         {data.map((dog) => (
           <CardDog

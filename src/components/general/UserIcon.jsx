@@ -4,13 +4,14 @@ import Link from "next/link";
 import { LuBadgeCheck } from "react-icons/lu";
 
 const UserIcon = ({userInfo}) =>{
+  console.log(userInfo);
 	return (
 		<div className="dropdown dropdown-end pr-5">
       <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
         <div className="w-20 rounded-full">
          <Image
            alt="Profile picture"
-           src={userInfo.profilePicture}
+           src={userInfo.pfp}
            width={20}
            height={20}
           />
