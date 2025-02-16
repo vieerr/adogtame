@@ -1,8 +1,8 @@
 import { betterAuth } from "better-auth";
-import Database from "better-sqlite3";
+import { mongodbAdapter } from "better-auth/adapters/mongodb";
+import { client } from "./mongodb";
+
 export const auth = betterAuth({
-  emailAndPassword: {
-    enabled: true,
-  },
-  database: new Database("./sqlite.db"),
+  database: mongodbAdapter(client),
+  emailAndPassword: { enabled: true },
 });

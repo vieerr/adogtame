@@ -5,27 +5,16 @@ import UserIcon from "./UserIcon";
 import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
 import { user } from "@/db";
+import { useSession } from "@/lib/auth-client";
 
-const userAuthenticated = () => {
-  //Method to check if the user has Logged in
-  //store in "current user" variable all the user data
-  //Example:
-  const currentUser = user;
 
-  //Return the object to be used in the component
-  if (Object.keys(currentUser).length === 0) {
-    return [false, {}];
-  } else {
-    const userInfo = {
-      pfp: currentUser.pfp,
-      type: currentUser.type,
-    };
-    return [true, userInfo];
-  }
-};
+
 
 const Navbar = () => {
-  const [profileVisible, userInfo] = userAuthenticated();
+    const {
+      data: session,
+    } = useSession();
+    console.log(session)
 
   return (
     <div className="navbar fixed z-10 bg-base-100 shadow-primary shadow-sm">
@@ -35,12 +24,12 @@ const Navbar = () => {
         </Link>
       </div>
       <div className="flex-none">
-        {profileVisible ? (
+        {session ? (
           <div className="flex items-center space-x-4 gap-10">
             <Link href={"/perros/add-dog"} className="btn btn-secondary btn-lg text-xl">
               Agregar Perro
             </Link>
-            <UserIcon userInfo={userInfo} />
+            <UserIcon userInfo={session.user} />
           </div>
         ) : (
           <div
