@@ -14,11 +14,12 @@ import { IoMaleFemale } from "react-icons/io5";
 import { GiComb } from "react-icons/gi";
 
 const DogDetails = ({ dog }) => {
+  console.log(dog);
   return (
     <div className="container mx-auto p-4">
       {/* Carousel Section */}
       <div className="carousel w-full  mb-8">
-        {dog.additionalImages.map((img, index) => (
+        {dog?.additionalImages.map((img, index) => (
           <div
             key={index}
             id={`slide${index}`}
