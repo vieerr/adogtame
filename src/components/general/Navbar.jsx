@@ -7,14 +7,9 @@ import Link from "next/link";
 import { user } from "@/db";
 import { useSession } from "@/lib/auth-client";
 
-
-
-
 const Navbar = () => {
-    const {
-      data: session,
-    } = useSession();
-    console.log(session)
+  const { data: session } = useSession();
+  console.log(session);
 
   return (
     <div className="navbar fixed z-10 bg-base-100 shadow-primary shadow-sm">
@@ -26,18 +21,32 @@ const Navbar = () => {
       <div className="flex-none">
         {session ? (
           <div className="flex items-center space-x-4 gap-10">
-            <Link href={"/perros/add-dog"} className="btn btn-secondary btn-lg text-xl">
+            <Link
+              href={"/perros/add-dog"}
+              className="btn btn-secondary btn-lg text-xl"
+            >
               Agregar Perro
             </Link>
             <UserIcon userInfo={session.user} />
           </div>
         ) : (
-          <div
-            tabIndex={0}
-            role="button"
-            className="btn btn-ghost bg-[#356aae] text-white hover:bg-[#284f83]"
-          >
-            <div className=" text-xs rounded-full">REGISTER</div>
+          <div className="flex items-center space-x-4 gap-10">
+            <Link
+              tabIndex={0}
+              href={"/user/sign-in"}
+              role="button"
+              className="btn btn-ghost bg-[#356aae] text-white hover:bg-[#284f83]"
+            >
+              <div className=" text-md rounded-full">Iniciar sesión</div>
+            </Link>
+            <Link
+              tabIndex={0}
+              href={"/user/sign-up"}
+              role="button"
+              className="btn btn-ghost bg-[#356aae] text-white hover:bg-[#284f83]"
+            >
+              <div className=" text-md rounded-full">Crear cuenta</div>
+            </Link>
           </div>
         )}
       </div>
