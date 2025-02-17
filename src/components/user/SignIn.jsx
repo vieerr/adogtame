@@ -1,103 +1,130 @@
 "use client";
 
-import { useState } from "react";
-import { FaSpinner } from "react-icons/fa";
+import { useState, useEffect } from "react";
+import { FaSpinner, FaGoogle, FaGithub } from "react-icons/fa";
 import { signIn, useSession } from "@/lib/auth-client";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 export default function SignIn() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
   const [loading, setLoading] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [errors, setErrors] = useState({});
+  const router = useRouter();
+  const { data: session } = useSession();
 
-  const {
-    data: session,
-  } = useSession();
+  useEffect(() => {
+    if (session) {
+      router.push("/perros");
+    }
+  }, [session, router]);
+
+  const validateForm = () => {
+    const newErrors = {};
+    if (!/^\S+@\S+\.\S+$/.test(formData.email)) newErrors.email = "Correo electrónico inválido";
+    if (formData.password.length < 8) newErrors.password = "La contraseña debe tener al menos 8 caracteres";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = async () => {
+    if (!validateForm()) return;
+    
+    setLoading(true);
+    try {
+      await signIn.email({ 
+        email: formData.email, 
+        password: formData.password 
+      });
+      toast.success("¡Bienvenido de nuevo!");
+    } catch (error) {
+      toast.error("Credenciales inválidas");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (session) return null;
 
   return (
-    <div>
-      {session ? (
-        <div className="card max-w-md shadow-xl">
-          <div className="card-body">
-            <h2 className="card-title text-lg md:text-xl">Sign In</h2>
-            <p className="text-xs md:text-sm">
-              Enter your email below to login to your account
-            </p>
-            <div className="form-control space-y-4 mt-4">
-              <div>
-                <label htmlFor="email" className="label">
-                  <span className="label-text">Email</span>
-                </label>
-                <input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  className="input input-bordered w-full"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-
-              <div>
-                <label htmlFor="password" className="label">
-                  <span className="label-text">Password</span>
-                </label>
-                <input
-                  id="password"
-                  type="password"
-                  placeholder="password"
-                  autoComplete="password"
-                  className="input input-bordered w-full"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="flex items-center gap-2">
-                <input
-                  id="remember"
-                  type="checkbox"
-                  className="checkbox"
-                  checked={rememberMe}
-                  onChange={() => setRememberMe(!rememberMe)}
-                />
-                <label htmlFor="remember" className="label cursor-pointer">
-                  <span className="label-text">Remember me</span>
-                </label>
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-primary w-full"
-                disabled={loading}
-                onClick={async () => {
-                  setLoading(true);
-                  await signIn.email({ email, password });
-                  setLoading(false);
-                }}
-              >
-                {loading ? <FaSpinner className="animate-spin" /> : "Login"}
-              </button>
-            </div>
-          </div>
-          <div className="card-footer border-t">
-            <p className="text-center text-xs text-neutral-500 w-full">
-              Powered by{" "}
-              <Link
-                href="https://better-auth.com"
-                className="underline"
-                target="_blank"
-              >
-                <span className="text-orange-500">better-auth.</span>
-              </Link>
-            </p>
-          </div>
+    <div className="card w-full max-w-md bg-base-100 shadow-2xl border border-base-200">
+      <div className="card-body p-8">
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-primary mb-2">Bienvenido de nuevo</h1>
+          <p className="text-base-content/70">Inicia sesión para continuar tu viaje</p>
         </div>
-      ) : (
-        redirect("/perros")
-      )}{" "}
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Correo electrónico</span>
+          </label>
+          <input
+            id="email"
+            type="email"
+            placeholder="juan@ejemplo.com"
+            className={`input input-bordered ${errors.email ? "input-error" : ""}`}
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+          />
+          {errors.email && <span className="text-error text-sm mt-1">{errors.email}</span>}
+        </div>
+
+        <div className="form-control">
+          <label className="label">
+            <span className="label-text">Contraseña</span>
+          </label>
+          <input
+            id="password"
+            type="password"
+            className={`input input-bordered ${errors.password ? "input-error" : ""}`}
+            value={formData.password}
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          />
+          {errors.password && <span className="text-error text-sm mt-1">{errors.password}</span>}
+        </div>
+
+        <div className="flex justify-between items-center">
+          <label className="label cursor-pointer gap-2">
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              checked={rememberMe}
+              onChange={() => setRememberMe(!rememberMe)}
+            />
+            <span className="label-text">Recuérdame</span>
+          </label>
+          <Link href="/forgot-password" className="text-sm link link-hover">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </div>
+
+        <button
+          className={`btn btn-primary w-full ${loading ? "btn-disabled" : ""}`}
+          onClick={handleSubmit}
+        >
+          {loading ? (
+            <>
+              <FaSpinner className="animate-spin" />
+              Iniciando sesión...
+            </>
+          ) : (
+            "Iniciar sesión"
+          )}
+        </button>
+
+        <p className="text-center text-sm text-base-content/70">
+          ¿No tienes una cuenta?{" "}
+          <Link href="/signup" className="text-primary hover:underline">
+            Crea una
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
