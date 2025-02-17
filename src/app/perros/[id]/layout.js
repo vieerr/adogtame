@@ -1,13 +1,13 @@
 "use client";
-
-import DogFilter from "@/components/dogs/DogFilter";
+import React from "react";
 import QueryProvider from "@/components/providers/QueryProvider";
-const Perros = () => {
+
+const Layout = ({ children }) => {
   return (
     <QueryProvider>
-      <DogFilter />
+      <div>{children}</div>
     </QueryProvider>
   );
 };
 
-export default Perros;
+export default Layout;

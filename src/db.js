@@ -345,3 +345,32 @@ export const dogs = [
       "Yorkshire Terrier muy vivaz y afectuoso, perfecto para compañía en interiores.",
   },
 ];
+
+export const user = {
+  userId: 123,
+  pfp: "/profile_pic_dummy.webp",
+  name: "John Doe",
+  type: "rescatista",
+  dogs: [
+    {
+      id: 12313,
+      name: "Boby",
+      pfp: "/perro1.webp",
+    },
+    {
+      id: 12314,
+      name: "Luna",
+      pfp: "/perro2.webp",
+    },
+    {
+      id: 12315,
+      name: "Max",
+      pfp: "/perro3.webp",
+    },
+    {
+      id: 12316,
+      name: "Rex",
+      pfp: "/perro4.webp",
+    },
+  ],
+};
