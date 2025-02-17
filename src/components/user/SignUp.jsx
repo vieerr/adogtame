@@ -7,6 +7,7 @@ import { FiX, FiUpload } from "react-icons/fi";
 import { signUp } from "@/lib/auth-client";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
+import { useMutation } from "@tanstack/react-query";
 
 export default function SignUp() {
   const [formData, setFormData] = useState({
@@ -14,6 +15,7 @@ export default function SignUp() {
     lastName: "",
     email: "",
     password: "",
+    dogs: [],
     passwordConfirmation: "",
   });
   const [image, setImage] = useState(null);
@@ -70,29 +72,47 @@ export default function SignUp() {
 
     setLoading(true);
     try {
+      const { imageUrl } = await uploadImageMutation.mutateAsync(image);
+
       await signUp.email({
         ...formData,
         name: `${formData.firstName} ${formData.lastName}`,
-        image: image ? await convertImageToBase64(image) : "",
-        callbackURL: "/dashboard",
+        image: imageUrl, 
+        callbackURL: "/perros",
         fetchOptions: {
           onResponse: () => setLoading(false),
           onRequest: () => setLoading(true),
           onError: (ctx) => toast.error(ctx.error.message),
           onSuccess: async () => {
             toast.success("Account created successfully!");
-            router.push("/dashboard");
+            router.push("/perros");
           },
         },
       });
+      toast.success("Account created successfully!");
     } catch (error) {
       toast.error("An error occurred during signup");
       setLoading(false);
     }
   };
 
+  const uploadImageMutation = useMutation({
+    mutationFn: async (imageFile) => {
+      const formData = new FormData();
+      formData.append("image", imageFile);
+  
+      const response = await fetch("http://localhost:3001/upload", {
+        method: "POST",
+        body: formData,
+      });
+  
+      if (!response.ok) throw new Error("Error uploading image");
+      return response.json();
+    },
+  });
+
   return (
-    <div className="mt-10 card bg-base-100 shadow-2xl border border-base-200 w-1/2">
+    <div className="mt-10 card bg-base-100 shadow-2xl border border-base-200 w-1/3">
       <div className="card-body p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">
@@ -289,11 +309,4 @@ export default function SignUp() {
   );
 }
 
-async function convertImageToBase64(file) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
-    reader.onerror = reject;
-    reader.readAsDataURL(file);
-  });
-}
+

@@ -2,14 +2,11 @@
 
 import Image from "next/image";
 import UserIcon from "./UserIcon";
-import { redirect } from "next/dist/server/api-utils";
 import Link from "next/link";
-import { user } from "@/db";
 import { useSession } from "@/lib/auth-client";
 
 const Navbar = () => {
   const { data: session } = useSession();
-  console.log(session);
 
   return (
     <div className="navbar fixed z-10 bg-base-100 shadow-primary shadow-sm">

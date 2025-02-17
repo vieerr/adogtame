@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import CardDog from "./CardDog";
 
 const PanelCard = ({ data, cols }) => {
-  console.log(data);
   const [likedDogs, setLikedDogs] = useState([]);
 
   const [colsStyle, setColsStyle] = useState("grid-cols-3");
