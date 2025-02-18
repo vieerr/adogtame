@@ -10,7 +10,7 @@ const DetailedPerro = () => {
   const { data: dog, isLoading, isError } = useQuery({
     queryKey: ['dog', dogId],
     queryFn: async () => {
-      const response = await fetch(`http://localhost:3001/dogs/${dogId}`);
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/dogs/${dogId}`);
       if (!response.ok) throw new Error('Dog not found');
       return response.json();
     },

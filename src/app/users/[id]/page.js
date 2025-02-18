@@ -1,7 +1,7 @@
-import { RiH1 } from "react-icons/ri";
+import UserProfileComponent from "@/components/user/UserProfile";
 
 const UserProfile = () => {
-    return (<div className="mt-10">User profile</div>);
-}
- 
+  return <UserProfileComponent />;
+};
+
 export default UserProfile;

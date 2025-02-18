@@ -5,6 +5,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
+import Link from "next/link";
 
 const AddDog = () => {
   const [user, setUser] = useState(null);
@@ -39,7 +40,7 @@ const AddDog = () => {
       const formData = new FormData();
       formData.append("image", imageFile);
 
-      const response = await fetch("http://localhost:3001/upload", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload`, {
         method: "POST",
         body: formData,
       });
@@ -52,7 +53,7 @@ const AddDog = () => {
   // Dog submission mutation
   const createDogMutation = useMutation({
     mutationFn: async (dogData) => {
-      const response = await fetch("http://localhost:3001/dogs", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/dogs`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(dogData),
@@ -148,6 +149,7 @@ const AddDog = () => {
                   {user?.dogs ? (
                     user.dogs.map((dog) => (
                       <div
+                      
                         key={dog.dogId}
                         className="card card-bordered flex flex-row shadow-md mx-2 p-3 items-center justify-evenly gap-3"
                       >
@@ -156,7 +158,7 @@ const AddDog = () => {
                           alt={dog.name}
                           className="rounded-full w-12 h-12"
                         />
-                        <p className="text-sm truncate">{dog.name}</p>
+                        <Link href={`/perros/${dog.dogId}`} className="text-sm truncate">{dog.name}</Link>
                         <button className="btn btn-square btn-secondary btn-md btn-ghost p-0 m-0">
                           <FaEdit />
                         </button>

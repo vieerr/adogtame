@@ -12,9 +12,9 @@ import { FaLocationDot } from "react-icons/fa6";
 import { IoMaleFemale } from "react-icons/io5";
 import { GiComb } from "react-icons/gi";
 import moment from "moment";
+import Link from "next/link";
 
 const DogDetails = ({ dog }) => {
-  // Calculate age with moment
   const calculateAge = (birthDate) => {
     const now = moment();
     const birth = moment(birthDate);
@@ -28,7 +28,6 @@ const DogDetails = ({ dog }) => {
     return ageString.join(' y ') || 'Recién nacido';
   };
 
-  // Combine images and add placeholder
   const allImages = [dog.pfp, ...dog.photos].filter(Boolean);
   const sizeMap = { small: "Pequeño", medium: "Mediano", big: "Grande" };
   const furMap = { short: "Corto", medium: "Medio", long: "Largo" };
@@ -218,7 +217,7 @@ const DogDetails = ({ dog }) => {
                 Dueño/Rescatista
               </h2>
 
-              <div className="flex items-center gap-4 mt-4">
+              <Link  href={`/users/${dog.owner.userId}`} replace className="flex items-center gap-4 mt-4">
                 <div className="avatar">
                   <div className="w-16 rounded-full bg-base-300">
                     {dog.owner?.pfp ? (
@@ -229,11 +228,10 @@ const DogDetails = ({ dog }) => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
+                <div className="space-y-2 flex">
                   {dog.owner?.name && (
                     <div className="flex items-center gap-2">
-                      <FaUser />
-                      <span className="font-medium">{dog.owner.name}</span>
+                      <span className="text-lg font-bold">{dog.owner.name}</span>
                     </div>
                   )}
 
@@ -255,7 +253,7 @@ const DogDetails = ({ dog }) => {
                     </div>
                   )}
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
 

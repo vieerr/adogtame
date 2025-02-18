@@ -15,7 +15,7 @@ const DogFilter = () => {
   } = useQuery({
     queryKey: ["dogs"],
     queryFn: async () => {
-      const response = await fetch("http://localhost:3001/dogs");
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/dogs`);
       if (!response.ok) throw new Error("Failed to fetch dogs");
       return response.json();
     },

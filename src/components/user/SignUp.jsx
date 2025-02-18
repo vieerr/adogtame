@@ -101,7 +101,7 @@ export default function SignUp() {
       const formData = new FormData();
       formData.append("image", imageFile);
   
-      const response = await fetch("http://localhost:3001/upload", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload`, {
         method: "POST",
         body: formData,
       });
