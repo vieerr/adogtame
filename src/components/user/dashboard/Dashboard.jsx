@@ -1,10 +1,17 @@
 "use client";
 
-import { FaBell, FaDog, FaHeart, FaHandHoldingHeart } from "react-icons/fa";
+import { FaBell, FaDog, FaHeart, FaHandHoldingHeart, FaUser, FaHandsHelping, FaHome } from "react-icons/fa";
 import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
 import moment from "moment";
 import { useEffect, useState } from "react";
+
+const userTypeMap = {
+  rescuer: { label: "Rescatista", icon: <FaHandsHelping className="w-4 h-4 mr-2" /> },
+  user: { label: "Usuario", icon: <FaUser className="w-4 h-4 mr-2" /> },
+  shelter: { label: "Refugio", icon: <FaHome className="w-4 h-4 mr-2" /> },
+};
+
 const Dashboard = () => {
   const { data: session } = useSession();
 
@@ -59,6 +66,10 @@ const Dashboard = () => {
                 fill
                 alt="Imagen de perfil"
               />
+            </div>
+            <div className="badge badge-secondary my-3 font-bold text-md badge-lg flex items-center">
+              {userTypeMap[user.type]?.icon}
+              {userTypeMap[user.type]?.label}
             </div>
             <p className="text-gray-400 mt-5">
               Miembro de{" "}

@@ -5,6 +5,7 @@ import { client } from "./mongodb";
 export const auth = betterAuth({
   user: {
     additionalFields: {
+      type: { type: "string", defaultValue: "user" },
       dogs: { type: "string[]", defaultValue: [] },
       phone: { type: "string", defaultValue: "" },
       location: { type: "string", defaultValue: "" },
