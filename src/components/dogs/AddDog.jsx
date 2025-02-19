@@ -7,6 +7,15 @@ import { useRouter } from "next/navigation";
 import { useSession } from "@/lib/auth-client";
 import Link from "next/link";
 
+const userTypeMap = {
+  rescuer: {
+    label: "Rescatista",
+  },
+  user: { label: "Usuario" },
+  shelter: { label: "Refugio" },
+};
+
+
 const AddDog = () => {
   const [user, setUser] = useState(null);
   const { data: session, refetch } = useSession();
@@ -133,7 +142,7 @@ const AddDog = () => {
               <div className="flex flex-col gap-2">
                 <p className="prose font-bold">{user.name}</p>
                 <p className="prose font-extralight capitalize text-xs text-gray-500">
-                  {user.type}
+                  {userTypeMap[user.type].label}
                 </p>
               </div>
             </div>
