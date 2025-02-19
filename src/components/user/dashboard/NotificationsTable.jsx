@@ -39,7 +39,7 @@ const NotificationsTable = ({notifications}) => {
         <tbody>
           {notifications.map((noti) => {
             return (
-              <tr onClick={()=>router.replace(`/perros/${noti.dogId}`)} key={noti.id} className= {`${noti.isRead ? "text-gray-500":"text-black" } hover:bg-slate-100 cursor-pointer`}>
+              <tr key={noti._id} onClick={()=>router.replace(`/perros/${noti.dogId}`)}  className= {`${noti.isRead ? "text-gray-500":"text-black" } hover:bg-slate-100 cursor-pointer`}>
                 <td>
                   <label>
                     <input type="checkbox" className="checkbox" />

@@ -15,12 +15,130 @@ import { GiComb } from "react-icons/gi";
 import moment from "moment";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+
+// Modal component for displaying and handling requests (works for both adoption and sponsor)
+const RequestModal = ({ dogId, type, onClose }) => {
+  // Determine endpoint based on type
+  const endpoint =
+    type === "adoption"
+      ? `http://localhost:3001/requests/adoptions/${dogId}`
+      : `http://localhost:3001/requests/sponsors/${dogId}`;
+
+  // Fetch the list of requests
+  const {
+    data: requests,
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery({
+    queryKey: [type, dogId],
+    queryFn: async () => {
+      const res = await fetch(endpoint);
+      if (!res.ok) throw new Error("Error al cargar solicitudes");
+      return res.json();
+    },
+    enabled: !!dogId,
+  });
+
+  // Mutation to update a request status
+  const updateRequestMutation = useMutation({
+    mutationFn: async ({ requestId, updatedRequest }) => {
+      const res = await fetch(`http://localhost:3001/requests/${requestId}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedRequest),
+      });
+      if (!res.ok) throw new Error("Error al actualizar la solicitud");
+      return res.json();
+    },
+    onSuccess: () => {
+      refetch();
+    },
+  });
+
+  // Handler for updating request status
+  const handleUpdate = (requestId, status) => {
+    updateRequestMutation.mutate({
+      requestId,
+      updatedRequest: { status },
+    });
+  };
+
+  const statusMap = {
+    pending: "Pendiente",
+    approved: "Aprobado",
+    rejected: "Rechazado",
+  };
+
+  return (
+    <>
+      {/* Modal overlay */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+        <div className="bg-white p-6 rounded-lg w-96 max-h-full overflow-y-auto">
+          <h3 className="text-xl font-bold mb-4">
+            Solicitudes de {type === "adoption" ? "adopción" : "patrocinio"}
+          </h3>
+          {isLoading && <p>Cargando solicitudes...</p>}
+          {isError && <p>Error al cargar solicitudes.</p>}
+          {requests && requests.length === 0 && (
+            <p>No hay solicitudes pendientes.</p>
+          )}
+          {requests &&
+            requests.map((request) => (
+              <div
+                key={request._id}
+                className="border p-4 mb-3 rounded-md flex justify-between items-center"
+              >
+                <div>
+                  {/* Assuming request.user is populated with a name property */}
+                  <p className="font-semibold">
+                    {request.user_name || "Usuario desconocido"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    Estado: {statusMap[request.status]}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleUpdate(request._id, "approved")}
+                    className="bg-green-500 text-white px-3 py-1 rounded"
+                  >
+                    Aprobar
+                  </button>
+                  <button
+                    onClick={() => handleUpdate(request._id, "rejected")}
+                    className="bg-red-500 text-white px-3 py-1 rounded"
+                  >
+                    Rechazar
+                  </button>
+                </div>
+              </div>
+            ))}
+          <div className="mt-4 flex justify-end">
+            <button onClick={onClose} className="bg-gray-300 px-4 py-2 rounded">
+              Cerrar
+            </button>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
 
 const DogDetails = ({ dog }) => {
   const { data: session } = useSession();
+  const [user, setUser] = useState(null);
+  const [isOwner, setIsOwner] = useState(false);
+  const [adoptionModal, setAdoptionModal] = useState(false);
+  const [sponsorModal, setSponsorModal] = useState(false);
 
-  // Mutation to create a new notification matching your Mongoose schema
+  useEffect(() => {
+    setUser(session?.user);
+    setIsOwner(session?.user?.id === dog.owner.userId);
+  }, [session, dog.owner.userId]);
+
   const { mutate: createNotification } = useMutation({
     mutationFn: async (notification) => {
       return fetch(
@@ -37,6 +155,16 @@ const DogDetails = ({ dog }) => {
     },
     onError: (err) => {
       console.error("Error creando la notificación", err);
+    },
+  });
+
+  const { mutate: createRequest } = useMutation({
+    mutationFn: async (request) => {
+      return fetch(`http://localhost:3001/requests`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(request),
+      }).then((res) => res.json());
     },
   });
 
@@ -62,11 +190,19 @@ const DogDetails = ({ dog }) => {
       "_blank"
     );
 
-    // Create a notification for the adoption request including the dogId
+    // Create a notification and request for adoption
     createNotification({
       message: `${session?.user?.name} ha solicitado adoptar a ${dog.name}.`,
       type: "adoptions",
       dogId: dog._id,
+    });
+
+    createRequest({
+      dog: dog._id,
+      user: session?.user?.id,
+      user_name: session?.user?.name,
+      owner: dog.owner.userId,
+      type: "adoption",
     });
   };
 
@@ -78,12 +214,28 @@ const DogDetails = ({ dog }) => {
       "_blank"
     );
 
-    // Create a notification for the sponsorship request including the dogId
+    // Create a notification and request for sponsorship
     createNotification({
       message: `${session?.user?.name} ha solicitado patrocinar a ${dog.name}.`,
       type: "sponsors",
       dogId: dog._id,
     });
+
+    createRequest({
+      dog: dog._id,
+      user: session?.user?.id,
+      user_name: session?.user?.name,
+      owner: dog.owner.userId,
+      type: "sponsor",
+    });
+  };
+
+  const handleAdoptionList = () => {
+    setAdoptionModal(true);
+  };
+
+  const handleSponsorList = () => {
+    setSponsorModal(true);
   };
 
   const allImages = [dog.pfp, ...dog.photos].filter(Boolean);
@@ -109,13 +261,17 @@ const DogDetails = ({ dog }) => {
               />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a
-                  href={`#slide${index === 0 ? allImages.length - 1 : index - 1}`}
+                  href={`#slide${
+                    index === 0 ? allImages.length - 1 : index - 1
+                  }`}
                   className="btn btn-circle"
                 >
                   ❮
                 </a>
                 <a
-                  href={`#slide${index === allImages.length - 1 ? 0 : index + 1}`}
+                  href={`#slide${
+                    index === allImages.length - 1 ? 0 : index + 1
+                  }`}
                   className="btn btn-circle"
                 >
                   ❯
@@ -149,7 +305,6 @@ const DogDetails = ({ dog }) => {
                 {calculateAge(dog.birth_date)}
               </div>
             </div>
-
             <div className="stat">
               <div className="stat-figure text-secondary">
                 <FaDog className="text-3xl" />
@@ -160,7 +315,6 @@ const DogDetails = ({ dog }) => {
               </div>
               <div className="stat-desc">Tipo de raza</div>
             </div>
-
             <div className="stat">
               <div className="stat-figure text-secondary">
                 <FaRulerHorizontal className="text-3xl" />
@@ -170,7 +324,6 @@ const DogDetails = ({ dog }) => {
               <div className="stat-desc">Pequeño, Mediano, Grande</div>
             </div>
           </div>
-
           <div className="stats shadow w-full my-6">
             <div className="stat">
               <div className="stat-figure text-secondary">
@@ -179,7 +332,6 @@ const DogDetails = ({ dog }) => {
               <div className="stat-title">Género</div>
               <div className="stat-value">{genderMap[dog.sex]}</div>
             </div>
-
             <div className="stat">
               <div className="stat-figure text-secondary">
                 <GiComb className="text-3xl" />
@@ -187,7 +339,6 @@ const DogDetails = ({ dog }) => {
               <div className="stat-title">Pelaje</div>
               <div className="stat-value">{furMap[dog.fur]}</div>
             </div>
-
             <div className="stat">
               <div className="stat-figure text-secondary">
                 <FaWeightHanging className="text-3xl" />
@@ -196,7 +347,6 @@ const DogDetails = ({ dog }) => {
               <div className="stat-value">{dog.weight} KG</div>
             </div>
           </div>
-
           <div className="flex flex-col md:flex-row gap-4 mb-6">
             <div className="card bg-base-100 shadow-md flex-1">
               <div className="card-body">
@@ -213,7 +363,6 @@ const DogDetails = ({ dog }) => {
                 </div>
               </div>
             </div>
-
             <div className="card bg-base-100 shadow-md flex-1">
               <div className="card-body">
                 <h2 className="card-title">
@@ -229,8 +378,6 @@ const DogDetails = ({ dog }) => {
               </div>
             </div>
           </div>
-
-          {/* Additional Information */}
           {dog.characteristics?.length > 0 && (
             <div className="collapse collapse-arrow bg-base-200 mb-4">
               <input type="checkbox" />
@@ -247,36 +394,35 @@ const DogDetails = ({ dog }) => {
             </div>
           )}
         </div>
-
-        {/* Action Section */}
         <div className="space-y-6">
           <div className="card bg-base-100 shadow-md">
             <div className="card-body">
               <button
-                onClick={handleAdoption}
-                className={`btn btn-secondary btn-block ${session ? "" : "btn-disabled"}`}
+                onClick={isOwner ? handleAdoptionList : handleAdoption}
+                className={`btn btn-secondary btn-block ${
+                  session ? "" : "btn-disabled"
+                }`}
               >
                 <FaHome className="text-xl" />
-                Solicitar adopción
+                {isOwner ? "Solicitudes de adopción" : "Solicitar adopción"}
               </button>
               <button
-                onClick={handleSponsor}
-                className={`btn btn-success btn-block ${session ? "" : "btn-disabled"}`}
+                onClick={isOwner ? handleSponsorList : handleSponsor}
+                className={`btn btn-success btn-block ${
+                  session ? "" : "btn-disabled"
+                }`}
               >
                 <RiMoneyDollarCircleFill className="text-xl" />
-                Solicitar patrocinio
+                {isOwner ? "Solicitudes de patrocinio" : "Patrocinar"}
               </button>
             </div>
           </div>
-
-          {/* Owner Section */}
           <div className="card bg-base-100 shadow-md mt-6">
             <div className="card-body">
               <h2 className="card-title">
                 <FaUser className="text-primary mr-2" />
                 Dueño/Rescatista
               </h2>
-
               <Link
                 href={`/users/${dog.owner.userId}`}
                 replace
@@ -291,18 +437,18 @@ const DogDetails = ({ dog }) => {
                     )}
                   </div>
                 </div>
-
                 <div className="space-y-2 flex">
                   {dog.owner?.name && (
                     <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold">{dog.owner.name}</span>
+                      <span className="text-lg font-bold">
+                        {dog.owner.name}
+                      </span>
                     </div>
                   )}
                 </div>
               </Link>
             </div>
           </div>
-
           {dog.sponsors?.length > 0 && (
             <div className="card bg-base-100 shadow-md">
               <div className="card-body">
@@ -324,6 +470,21 @@ const DogDetails = ({ dog }) => {
           )}
         </div>
       </div>
+      {/* Modals */}
+      {adoptionModal && (
+        <RequestModal
+          dogId={dog._id}
+          type="adoption"
+          onClose={() => setAdoptionModal(false)}
+        />
+      )}
+      {sponsorModal && (
+        <RequestModal
+          dogId={dog._id}
+          type="sponsor"
+          onClose={() => setSponsorModal(false)}
+        />
+      )}
     </div>
   );
 };
