@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { useEffect, useState } from "react";
+import moment from "moment";
 
 const CardDog = ({ dog, isLiked }) => {
   const [liked, setLiked] = useState(isLiked);
@@ -29,26 +30,6 @@ const CardDog = ({ dog, isLiked }) => {
       );
       return response.data;
     },
-
-    // onMutate: async () => {
-    //   await queryClient.cancelQueries(["user", userId]);
-    //   const previousUser = queryClient.getQueryData(["user", userId]);
-
-    //   // Optimistically update the UI
-    //   queryClient.setQueryData(["user", userId], (old) => ({
-    //     ...old,
-    //     favorites: isLiked
-    //       ? old.favorites.filter((fav) => fav._id !== dog._id)
-    //       : [...old.favorites, {
-    //           _id: dog._id,
-    //           name: dog.name,
-    //           pfp: dog.pfp,
-    //           location: dog.location
-    //         }]
-    //   }));
-
-    //   return { previousUser };
-    // },
     onError: (err, variables, context) => {
       queryClient.setQueryData(["user", userId], context.previousUser);
     },
@@ -61,8 +42,12 @@ const CardDog = ({ dog, isLiked }) => {
     return sterilized ? "Esterilizado" : "No esterilizado";
   };
 
+  const calculateAge = (birthDate) => {
+    return moment().diff(moment(birthDate), "years");
+  };
+
   return (
-    <div className="card card-compact bg-base-100 w-64 shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 hover:border-blue-600">
+    <div className="card card-compact bg-white w-64 shadow-lg transition-transform duration-300 hover:-translate-y-2 border border-gray-200 hover:border-blue-500 rounded-lg overflow-hidden">
       <figure className="relative w-full h-48">
         <Link href={`/perros/${dog._id}`}>
           <Image
@@ -75,11 +60,11 @@ const CardDog = ({ dog, isLiked }) => {
           />
         </Link>
       </figure>
-      <div className="card-body rounded-b-lg">
+      <div className="card-body p-4">
         <div className="flex items-center gap-2 w-full">
           <Link
             href={`/perros/${dog._id}`}
-            className="card-title text-blue-600"
+            className="card-title text-blue-600 font-semibold text-lg"
           >
             {dog.name}
           </Link>
@@ -107,10 +92,7 @@ const CardDog = ({ dog, isLiked }) => {
             </svg>
           </button>
         </div>
-        <p>
-          {handleSterilized(dog.esterilizado)} - {dog.age}
-        </p>
-        <p className="capitalize text-gray-500">{dog.sexo}</p>
+        <p className="text-md text-gray-500 ">{dog.location} - {calculateAge(dog.birth_date)} años</p>
       </div>
     </div>
   );
