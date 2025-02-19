@@ -17,7 +17,7 @@ const SponsoredDogs = () => {
   } = useQuery({
     queryKey: ["requestsUser", userId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/requests/users/${userId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/users/${userId}`);
       if (!res.ok) throw new Error("Error al cargar solicitudes del usuario");
       return res.json();
     },
@@ -32,7 +32,7 @@ const SponsoredDogs = () => {
   } = useQuery({
     queryKey: ["requestsOwner", userId],
     queryFn: async () => {
-      const res = await fetch(`http://localhost:3001/requests/owner/${userId}`);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/owner/${userId}`);
       if (!res.ok) throw new Error("Error al cargar solicitudes para tus perros");
       return res.json();
     },

@@ -18,7 +18,7 @@ const CardDog = ({ dog, isLiked }) => {
   const toggleFavoriteMutation = useMutation({
     mutationFn: async () => {
       const response = await axios.patch(
-        `http://localhost:3001/users/toggle-favorite/${userId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/toggle-favorite/${userId}`,
 
         {
           _id: dog._id,

@@ -15,7 +15,7 @@ const UserDogs = () => {
     queryKey: ["userDogs", userId],
     queryFn: async () => {
       if (!userId) return []; // Return empty array if no userId
-      const response = await axios.get(`http://localhost:3001/dogs/user/${userId}`);
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/dogs/user/${userId}`);
       return response.data;
     },
     enabled: !!userId, // Only fetch if userId is available

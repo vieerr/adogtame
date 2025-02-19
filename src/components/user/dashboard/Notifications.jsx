@@ -19,7 +19,7 @@ const Notifications = () => {
     queryFn: async () => {
       if (!userId) return [];
       const res = await fetch(
-        `http://localhost:3001/notifications/user/${userId}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/notifications/user/${userId}`
       );
       if (!res.ok) throw new Error("Error al cargar notificaciones");
       return res.json();

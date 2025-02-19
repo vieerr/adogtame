@@ -36,7 +36,7 @@ const EditProfile = () => {
   const mutation = useMutation({
     mutationFn: (updatedUser) =>
       axios.put(
-        `http://localhost:3001/users/edit/${user.id}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/users/edit/${user.id}`,
         { ...updatedUser, phone: `+593${updatedUser.phone}` }
       ),
     onSuccess: () => {

@@ -23,8 +23,8 @@ const RequestModal = ({ dogId, type, onClose }) => {
   // Determine endpoint based on type
   const endpoint =
     type === "adoption"
-      ? `http://localhost:3001/requests/adoptions/${dogId}`
-      : `http://localhost:3001/requests/sponsors/${dogId}`;
+      ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/adoptions/${dogId}`
+      : `${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/sponsors/${dogId}`;
 
   // Fetch the list of requests
   const {
@@ -45,7 +45,7 @@ const RequestModal = ({ dogId, type, onClose }) => {
   // Mutation to update a request status
   const updateRequestMutation = useMutation({
     mutationFn: async ({ requestId, updatedRequest }) => {
-      const res = await fetch(`http://localhost:3001/requests/${requestId}`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/${requestId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updatedRequest),
@@ -142,7 +142,7 @@ const DogDetails = ({ dog }) => {
   const { mutate: createNotification } = useMutation({
     mutationFn: async (notification) => {
       return fetch(
-        `http://localhost:3001/notifications/user/${dog.owner.userId}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/notifications/user/${dog.owner.userId}`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -160,7 +160,7 @@ const DogDetails = ({ dog }) => {
 
   const { mutate: createRequest } = useMutation({
     mutationFn: async (request) => {
-      return fetch(`http://localhost:3001/requests`, {
+      return fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(request),
