@@ -7,6 +7,7 @@ import {
   FaHome,
   FaUser,
   FaPhone,
+  FaHandsHelping,
 } from "react-icons/fa";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { FaLocationDot } from "react-icons/fa6";
@@ -17,6 +18,14 @@ import Link from "next/link";
 import { useSession } from "@/lib/auth-client";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
+const userTypeMap = {
+  rescuer: {
+    label: "Rescatista",
+    icon: <FaHandsHelping className="w-4 h-4 mr-2" />,
+  },
+  user: { label: "Usuario", icon: <FaUser className="w-4 h-4 mr-2" /> },
+  shelter: { label: "Refugio", icon: <FaHome className="w-4 h-4 mr-2" /> },
+};
 
 // Modal component for displaying and handling requests (works for both adoption and sponsor)
 const RequestModal = ({ dogId, type, onClose }) => {
@@ -45,11 +54,14 @@ const RequestModal = ({ dogId, type, onClose }) => {
   // Mutation to update a request status
   const updateRequestMutation = useMutation({
     mutationFn: async ({ requestId, updatedRequest }) => {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/${requestId}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(updatedRequest),
-      });
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/requests/${requestId}`,
+        {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updatedRequest),
+        }
+      );
       if (!res.ok) throw new Error("Error al actualizar la solicitud");
       return res.json();
     },
@@ -244,20 +256,20 @@ const DogDetails = ({ dog }) => {
   const genderMap = { male: "Macho", female: "Hembra" };
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="container mx-auto p-4 h-screen">
       {/* Carousel Section */}
-      <div className="carousel w-full mb-8 h-96">
+      <div className="carousel mt-5 w-full flex justify-center mb-8 h-2/4">
         {allImages.length > 0 ? (
           allImages.map((img, index) => (
             <div
               key={index}
               id={`slide${index}`}
-              className="carousel-item relative w-full"
+              className="carousel-item relative w-full bg-gray-800 "
             >
               <img
                 src={img}
                 alt={`${dog.name} ${index}`}
-                className="w-full h-96 object-cover rounded-lg"
+                className="w-full object-contain rounded-lg"
               />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a
@@ -301,7 +313,7 @@ const DogDetails = ({ dog }) => {
                 <FaBirthdayCake className="text-3xl" />
               </div>
               <div className="stat-title">Edad</div>
-              <div className="stat-value text-3xl">
+              <div className="stat-value text-3xl break-words whitespace-normal">
                 {calculateAge(dog.birth_date)}
               </div>
             </div>
@@ -438,13 +450,15 @@ const DogDetails = ({ dog }) => {
                   </div>
                 </div>
                 <div className="space-y-2 flex">
-                  {dog.owner?.name && (
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg font-bold">
-                        {dog.owner.name}
-                      </span>
-                    </div>
-                  )}
+                  <div className="flex flex-col gap-2">
+                    <span className="text-lg font-bold">{dog.owner?.name}</span>
+                    {dog.owner.type === user? "": (
+                      <div className="badge badge-secondary my-3 font-bold text-md badge-lg flex items-center">
+                        {userTypeMap[user?.type]?.icon}
+                        {userTypeMap[user?.type]?.label}
+                      </div>
+                    )}
+                  </div>
                 </div>
               </Link>
             </div>
