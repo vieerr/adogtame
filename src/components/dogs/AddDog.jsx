@@ -9,7 +9,7 @@ import Link from "next/link";
 
 const AddDog = () => {
   const [user, setUser] = useState(null);
-  const { data: session } = useSession();
+  const { data: session, refetch } = useSession();
   const router = useRouter();
 
   useEffect(() => {
@@ -106,6 +106,8 @@ const AddDog = () => {
         },
         pfp: imageUrl,
       });
+      refetch();
+
     } catch (error) {
       console.error("Error:", error);
     }
