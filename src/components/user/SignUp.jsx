@@ -40,7 +40,7 @@ export default function SignUp() {
     const file = e.target.files?.[0];
     if (file) {
       if (file.size > 2 * 1024 * 1024) {
-        toast.error("Image size should be less than 2MB");
+        toast.error("El tamaño de la imagen debe ser menor a 2MB");
         return;
       }
       setImage(file);
@@ -54,14 +54,14 @@ export default function SignUp() {
 
   const validateForm = () => {
     const newErrors = {};
-    if (!formData.firstName) newErrors.firstName = "First name is required";
-    if (!formData.lastName) newErrors.lastName = "Last name is required";
+    if (!formData.firstName) newErrors.firstName = "El nombre es obligatorio";
+    if (!formData.lastName) newErrors.lastName = "El apellido es obligatorio";
     if (!/^\S+@\S+\.\S+$/.test(formData.email))
-      newErrors.email = "Invalid email address";
+      newErrors.email = "Correo electrónico inválido";
     if (formData.password.length < 8)
-      newErrors.password = "Password must be at least 8 characters";
+      newErrors.password = "La contraseña debe tener al menos 8 caracteres";
     if (formData.password !== formData.passwordConfirmation)
-      newErrors.passwordConfirmation = "Passwords do not match";
+      newErrors.passwordConfirmation = "Las contraseñas no coinciden";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -84,14 +84,14 @@ export default function SignUp() {
           onRequest: () => setLoading(true),
           onError: (ctx) => toast.error(ctx.error.message),
           onSuccess: async () => {
-            toast.success("Account created successfully!");
+            toast.success("¡Cuenta creada con éxito!");
             router.push("/perros");
           },
         },
       });
-      toast.success("Account created successfully!");
+      toast.success("¡Cuenta creada con éxito!");
     } catch (error) {
-      toast.error("An error occurred during signup");
+      toast.error("Ocurrió un error durante el registro");
       setLoading(false);
     }
   };
@@ -106,7 +106,7 @@ export default function SignUp() {
         body: formData,
       });
   
-      if (!response.ok) throw new Error("Error uploading image");
+      if (!response.ok) throw new Error("Error al subir la imagen");
       return response.json();
     },
   });
@@ -116,14 +116,14 @@ export default function SignUp() {
       <div className="card-body p-8">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-primary mb-2">
-            Create Your Account
+            Crea tu cuenta
           </h1>
-          <p className="text-base-content/70">Join our community today</p>
+          <p className="text-base-content/70">Únete a nuestra comunidad hoy</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="form-control">
             <label className="label">
-              <span className="label-text">First Name</span>
+              <span className="label-text">Nombre</span>
             </label>
             <input
               id="firstName"
@@ -144,7 +144,7 @@ export default function SignUp() {
 
           <div className="form-control">
             <label className="label">
-              <span className="label-text">Last Name</span>
+              <span className="label-text">Apellido</span>
             </label>
             <input
               id="lastName"
@@ -164,7 +164,7 @@ export default function SignUp() {
 
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Email</span>
+            <span className="label-text">Correo Electrónico</span>
           </label>
           <input
             id="email"
@@ -183,7 +183,7 @@ export default function SignUp() {
 
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Password</span>
+            <span className="label-text">Contraseña</span>
           </label>
           <input
             id="password"
@@ -207,17 +207,17 @@ export default function SignUp() {
             </div>
             <span className="text-sm text-base-content/70">
               {passwordStrength < 3
-                ? "Weak"
+                ? "Débil"
                 : passwordStrength < 5
-                ? "Good"
-                : "Strong"}
+                ? "Buena"
+                : "Fuerte"}
             </span>
           </div>
         </div>
 
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Confirm Password</span>
+            <span className="label-text">Confirmar Contraseña</span>
           </label>
           <input
             id="passwordConfirmation"
@@ -237,8 +237,8 @@ export default function SignUp() {
 
         <div className="form-control">
           <label className="label">
-            <span className="label-text">Profile Photo</span>
-            <span className="label-text-alt">Optional</span>
+            <span className="label-text">Foto de Perfil</span>
+            <span className="label-text-alt">Opcional</span>
           </label>
           <div className="flex items-center gap-4">
             <div className="relative group">
@@ -246,7 +246,7 @@ export default function SignUp() {
                 {imagePreview ? (
                   <Image
                     src={imagePreview}
-                    alt="Profile preview"
+                    alt="Vista previa de perfil"
                     fill
                     className="object-cover"
                   />
@@ -290,23 +290,21 @@ export default function SignUp() {
             {loading ? (
               <>
                 <FaSpinner className="animate-spin" />
-                Creating Account...
+                Creando Cuenta...
               </>
             ) : (
-              "Create Account"
+              "Crear Cuenta"
             )}
           </button>
         </div>
 
         <p className="text-center text-sm text-base-content/70">
-          Already have an account?{" "}
+          ¿Ya tienes una cuenta?{" "}
           <a href="/login" className="text-primary hover:underline">
-            Log in
+            Iniciar sesión
           </a>
         </p>
       </div>
     </div>
   );
 }
-
-

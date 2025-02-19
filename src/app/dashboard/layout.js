@@ -1,10 +1,14 @@
+"use client";
 import Sidebar from "@/components/user/Sidebar";
+import QueryProvider from "@/components/providers/QueryProvider";
 
 const DashboardLayout = ({ children }) => {
   return (
-    <Sidebar>
-      <div className="pt-10">{children}</div>
-    </Sidebar>
+    <QueryProvider>
+      <Sidebar>
+        <div className="pt-10">{children}</div>
+      </Sidebar>
+    </QueryProvider>
   );
 };
 

@@ -1,18 +1,63 @@
-import { dogs } from "@/db";
+"use client";
+
+import { useQuery } from "@tanstack/react-query";
 import PanelCard from "@/components/dogs/PanelCard";
 import { FaDog, FaSort, FaPaw } from "react-icons/fa";
+import { useSession } from "@/lib/auth-client"; // Assuming you have a session hook
+import axios from "axios";
 
 const UserDogs = () => {
-  const data = dogs;
+  const { data: session } = useSession();
+  const userId = session?.user?.id; // Adjust based on your session structure
+
+  // Fetch dogs data using React Query
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["userDogs", userId],
+    queryFn: async () => {
+      if (!userId) return []; // Return empty array if no userId
+      const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/dogs/user/${userId}`);
+      return response.data;
+    },
+    enabled: !!userId, // Only fetch if userId is available
+  });
+
+  // Loading state
+  if (isLoading) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center p-6">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-secondary mx-auto"></div>
+          <p className="mt-4 text-gray-700">Cargando tus perros...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (isError) {
+    return (
+      <div className="w-full min-h-screen flex justify-center items-center p-6">
+        <div className="text-center text-red-600">
+          <p>Error al cargar los perros: {error.message}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 bg-secondary text-white px-6 py-2 rounded-lg hover:bg-secondary-dark transition-colors"
+          >
+            Reintentar
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full min-h-screen flex justify-center items-center p-6">
+    <div className="w-full  flex justify-center items-center p-6">
       <div className="w-full max-w-7xl">
         {/* Top Section with Title and Filter */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8 bg-white p-6 rounded-xl shadow-md border border-gray-100">
           <div className="flex items-center gap-4 mb-4 md:mb-0">
             <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
-              Mis Perros ({data.length})
+              Mis Perros ({data?.length || 0})
               <span className="text-secondary">
                 <FaDog size={25} />
               </span>
@@ -41,7 +86,7 @@ const UserDogs = () => {
 
         {/* Dog Cards Section */}
         <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-          {data.length > 0 ? (
+          {data?.length > 0 ? (
             <PanelCard
               data={data}
               cols={4}
@@ -53,8 +98,7 @@ const UserDogs = () => {
                 <FaPaw className="text-gray-400 text-4xl" />
               </div>
               <p className="text-gray-700 text-lg mb-4">
-                Aún no tienes perros en tu lista. ¡Empieza a añadir tus
-                favoritos!
+                Aún no tienes perros que necesiten ser adoptados.
               </p>
               <button className="mt-4 bg-secondary text-white px-6 py-2 rounded-lg hover:bg-secondary-dark transition-colors">
                 Explorar perritos
@@ -75,42 +119,3 @@ const UserDogs = () => {
 };
 
 export default UserDogs;
-
-// import { dogs } from "@/db";
-// import PanelCard from "@/components/dogs/PanelCard";
-
-// import { FaDog } from "react-icons/fa";
-// const UserDogs = () => {
-//   const data = dogs;
-
-//   return (
-//     <div className="w-full flex justify-start items-center flex-col">
-//       <div className="flex justify-between items-end gap-5 px-16 pt-0 w-full ">
-//         <h2 className="text-2xl font-light p-5 flex items-center gap-5">
-//           Mis Favoritos ({data.length})
-//           <span className="text-secondary">
-//             <FaDog size={25}  />
-//           </span>
-//         </h2>
-//         <label className="form-control w-full max-w-xs">
-//           <div className="label">
-//             <span className="label-text">Agrupar por:</span>
-//           </div>
-//           <select
-//             defaultValue={"recientes"}
-//             className="select select-bordered w-full max-w-xs"
-//           >
-//             <option value="date">Recientes</option>
-//             <option value="perros">Nombre (A-Z)</option>
-//             <option value="perros">Nombre (Z-A)</option>
-//             <option value="perros">Más días esperándote</option>
-//           </select>
-//         </label>
-//       </div>
-
-//       <PanelCard data={data} cols={4} />
-//     </div>
-//   );
-// };
-
-// export default UserDogs;
