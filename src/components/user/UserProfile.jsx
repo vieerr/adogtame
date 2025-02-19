@@ -13,6 +13,14 @@ import {
 } from "react-icons/fa";
 import { ImSpinner8 } from "react-icons/im";
 
+const userTypeMap = {
+  rescuer: {
+    label: "Rescatista",
+  },
+  user: { label: "Usuario" },
+  shelter: { label: "Refugio" },
+};
+
 const UserProfile = () => {
   const params = useParams();
   const id = params.id;
@@ -63,23 +71,26 @@ const UserProfile = () => {
                   />
                 </div>
               </div>
-              {user?.isRescuer && (
-                <div className="absolute -bottom-3 left-1/2 -translate-x-1/2">
-                  <div className="badge badge-success gap-2">
-                    <FaCheckCircle className="text-sm" />
-                    Verified Rescuer
-                  </div>
-                </div>
-              )}
             </div>
 
             <div className="flex-1 space-y-4">
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                {user?.name}
-                {user?.isRescuer && <FaCheckCircle className="text-success" />}
-              </h1>
+              <div className="text-2xl font-bold flex items-center gap-2">
+                <div className="flex flex-col">
+                  <h2 className="flex items-center gap-2">
+                    {user?.name}{" "}
+                    {user.type !== "user" && (
+                      <FaCheckCircle className="text-success" />
+                    )}
+                  </h2>
 
-              <p className="text-neutral-content">
+                  <span className="text-sm font-light text-neutral-content block">
+                    {userTypeMap[user.type].label}
+                  </span>
+                </div>
+                <div></div>
+              </div>
+
+              <p className="text-gray-700">
                 {user?.description || "Sin descripción"}
               </p>
             </div>
@@ -108,9 +119,7 @@ const UserProfile = () => {
             className="card bg-base-100 shadow-lg hover:bg-base-200  duration-100  transition-all"
           >
             <Link href={`/perros/${dog.dogId}`} replace className="card-body">
-              <div
-                className=" h-52 w-full relative mb-4"
-              >
+              <div className=" h-52 w-full relative mb-4">
                 <Image
                   alt={`Imagen de perfil del perro ${dog.name}`}
                   src={dog?.pfp}
@@ -122,9 +131,7 @@ const UserProfile = () => {
                 <div className=" h-4 w-1/2"></div>
               </div>
               <div className="mt-4 flex items-center justify-between text-sm">
-                <div
-                  className="btn btn-md btn-ghost"
-                >
+                <div className="btn btn-md btn-ghost">
                   Ver más
                   <FaArrowRight className="h-4 w-4" />
                 </div>
