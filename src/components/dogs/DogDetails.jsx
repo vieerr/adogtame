@@ -6,6 +6,7 @@ import {
   FaBriefcaseMedical,
   FaHome,
   FaUser,
+  FaPhone,
 } from "react-icons/fa";
 import { RiMoneyDollarCircleFill } from "react-icons/ri";
 import { FaLocationDot } from "react-icons/fa6";
@@ -13,19 +14,76 @@ import { IoMaleFemale } from "react-icons/io5";
 import { GiComb } from "react-icons/gi";
 import moment from "moment";
 import Link from "next/link";
+import { useSession } from "@/lib/auth-client";
+import { useMutation } from "@tanstack/react-query";
 
 const DogDetails = ({ dog }) => {
+  const { data: session } = useSession();
+
+  // Mutation to create a new notification matching your Mongoose schema
+  const { mutate: createNotification } = useMutation({
+    mutationFn: async (notification) => {
+      return fetch(
+        `http://localhost:3001/notifications/user/${dog.owner.userId}`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(notification),
+        }
+      ).then((res) => res.json());
+    },
+    onSuccess: () => {
+      console.log("Notificación creada exitosamente");
+    },
+    onError: (err) => {
+      console.error("Error creando la notificación", err);
+    },
+  });
+
   const calculateAge = (birthDate) => {
     const now = moment();
     const birth = moment(birthDate);
-    const years = now.diff(birth, 'year');
-    const months = now.subtract(years, 'years').diff(birth, 'months');
-    
+    const years = now.diff(birth, "year");
+    const months = now.subtract(years, "years").diff(birth, "months");
+
     let ageString = [];
-    if(years > 0) ageString.push(`${years} ${years === 1 ? 'año' : 'años'}`);
-    if(months > 0) ageString.push(`${months} ${months === 1 ? 'mes' : 'meses'}`);
-    
-    return ageString.join(' y ') || 'Recién nacido';
+    if (years > 0) ageString.push(`${years} ${years === 1 ? "año" : "años"}`);
+    if (months > 0)
+      ageString.push(`${months} ${months === 1 ? "mes" : "meses"}`);
+
+    return ageString.join(" y ") || "Recién nacido";
+  };
+
+  const handleAdoption = () => {
+    const message = `Hola, vi a ${dog.name} en Adogtame y me gustaría adoptarlo.`;
+    const phoneNumber = dog.owner.phone;
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+
+    // Create a notification for the adoption request including the dogId
+    createNotification({
+      message: `${session?.user?.name} ha solicitado adoptar a ${dog.name}.`,
+      type: "adoptions",
+      dogId: dog._id,
+    });
+  };
+
+  const handleSponsor = () => {
+    const message = `Hola, vi a ${dog.name} en Adogtame y me gustaría patrocinarlo.`;
+    const phoneNumber = dog.owner.phone;
+    window.open(
+      `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
+
+    // Create a notification for the sponsorship request including the dogId
+    createNotification({
+      message: `${session?.user?.name} ha solicitado patrocinar a ${dog.name}.`,
+      type: "sponsors",
+      dogId: dog._id,
+    });
   };
 
   const allImages = [dog.pfp, ...dog.photos].filter(Boolean);
@@ -51,17 +109,13 @@ const DogDetails = ({ dog }) => {
               />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a
-                  href={`#slide${
-                    index === 0 ? allImages.length - 1 : index - 1
-                  }`}
+                  href={`#slide${index === 0 ? allImages.length - 1 : index - 1}`}
                   className="btn btn-circle"
                 >
                   ❮
                 </a>
                 <a
-                  href={`#slide${
-                    index === allImages.length - 1 ? 0 : index + 1
-                  }`}
+                  href={`#slide${index === allImages.length - 1 ? 0 : index + 1}`}
                   className="btn btn-circle"
                 >
                   ❯
@@ -198,11 +252,17 @@ const DogDetails = ({ dog }) => {
         <div className="space-y-6">
           <div className="card bg-base-100 shadow-md">
             <div className="card-body">
-              <button className="btn btn-success btn-block">
+              <button
+                onClick={handleAdoption}
+                className={`btn btn-secondary btn-block ${session ? "" : "btn-disabled"}`}
+              >
                 <FaHome className="text-xl" />
                 Solicitar adopción
               </button>
-              <button className="btn btn-info btn-block">
+              <button
+                onClick={handleSponsor}
+                className={`btn btn-success btn-block ${session ? "" : "btn-disabled"}`}
+              >
                 <RiMoneyDollarCircleFill className="text-xl" />
                 Solicitar patrocinio
               </button>
@@ -217,7 +277,11 @@ const DogDetails = ({ dog }) => {
                 Dueño/Rescatista
               </h2>
 
-              <Link  href={`/users/${dog.owner.userId}`} replace className="flex items-center gap-4 mt-4">
+              <Link
+                href={`/users/${dog.owner.userId}`}
+                replace
+                className="flex items-center gap-4 mt-4"
+              >
                 <div className="avatar">
                   <div className="w-16 rounded-full bg-base-300">
                     {dog.owner?.pfp ? (
@@ -232,24 +296,6 @@ const DogDetails = ({ dog }) => {
                   {dog.owner?.name && (
                     <div className="flex items-center gap-2">
                       <span className="text-lg font-bold">{dog.owner.name}</span>
-                    </div>
-                  )}
-
-                  {dog.owner?.phone && (
-                    <div className="flex items-center gap-2">
-                      <FaPhone />
-                      <a href={`tel:${dog.owner.phone}`} className="link">
-                        {dog.owner.phone}
-                      </a>
-                    </div>
-                  )}
-
-                  {dog.owner?.email && (
-                    <div className="flex items-center gap-2">
-                      <FaEnvelope />
-                      <a href={`mailto:${dog.owner.email}`} className="link">
-                        {dog.owner.email}
-                      </a>
                     </div>
                   )}
                 </div>

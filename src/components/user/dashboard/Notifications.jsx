@@ -1,13 +1,38 @@
-import NotificationsTable from "./NotificationsTable";
+"use client";
 
+import NotificationsTable from "./NotificationsTable";
 import { FaSearch, FaBell } from "react-icons/fa";
+import { useSession } from "@/lib/auth-client";
+import { useQuery } from "@tanstack/react-query";
 
 const Notifications = () => {
+  const { data: session } = useSession();
+  const userId = session?.user?.id;
+
+  const {
+    data: notifications,
+    isLoading,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["notifications", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      const res = await fetch(
+        `http://localhost:3001/notifications/user/${userId}`
+      );
+      if (!res.ok) throw new Error("Error al cargar notificaciones");
+      return res.json();
+    },
+
+    enabled: !!userId, // Only run the query if userId is available
+  });
+
   return (
     <div className="w-full">
       <div className="flex flex-col md:flex-col justify-between items-left mb-8 bg-white p-6 mx-10 rounded-xl shadow-md border border-gray-100">
         <h2 className="text-2xl font-semibold text-gray-800 flex items-center gap-3">
-          Notificaciones 
+          Notificaciones
           <span className="text-secondary">
             <FaBell size={25} />
           </span>
@@ -20,8 +45,7 @@ const Notifications = () => {
           <div className="w-full ml-5">
             <label className="input input-bordered flex w-full pr-0">
               <input type="text" className="grow" placeholder="Search" />
-
-              <button className="btn btn-square  ">
+              <button className="btn btn-square">
                 <FaSearch />
               </button>
             </label>
@@ -31,7 +55,7 @@ const Notifications = () => {
               <span className="label-text">Agrupar por:</span>
             </div>
             <select
-              defaultValue={"date"}
+              defaultValue="date"
               className="select select-bordered w-full max-w-xs"
             >
               <option value="date">Fecha</option>
@@ -41,7 +65,9 @@ const Notifications = () => {
         </div>
       </div>
 
-      <NotificationsTable />
+      {isLoading && <div>Cargando notificaciones...</div>}
+      {isError && <div>Error al cargar notificaciones: {error.message}</div>}
+      {notifications && <NotificationsTable notifications={notifications} />}
     </div>
   );
 };

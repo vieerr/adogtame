@@ -9,6 +9,8 @@ export const auth = betterAuth({
       phone: { type: "string", defaultValue: "" },
       location: { type: "string", defaultValue: "" },
       bio: { type: "string", defaultValue: "" },
+      favorites: { type: "string[]", defaultValue: [] },
+      sponsored: { type: "string[]", defaultValue: [] },
     },
   },
   database: mongodbAdapter(client),

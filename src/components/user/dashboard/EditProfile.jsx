@@ -25,7 +25,7 @@ const EditProfile = () => {
       setUser((prev) => ({
         ...prev,
         ...session.user,
-        phone: session.user.phone || "",
+        phone: session.user.phone ? session.user.phone.replace("+593", "") : "",
         location: session.user.location || "",
         website: session.user.website || "",
         bio: session.user.bio || "",
@@ -37,7 +37,7 @@ const EditProfile = () => {
     mutationFn: (updatedUser) =>
       axios.put(
         `http://localhost:3001/users/edit/${user.id}`,
-        updatedUser
+        { ...updatedUser, phone: `+593${updatedUser.phone}` }
       ),
     onSuccess: () => {
       refetch();
@@ -141,13 +141,17 @@ const EditProfile = () => {
                 <label className="label">
                   <span className="label-text">Teléfono</span>
                 </label>
-                <input
-                  type="tel"
-                  name="phone"
-                  value={user.phone}
-                  onChange={handleChange}
-                  className="input input-bordered w-full"
-                />
+                <div className="flex items-center">
+                  <span className="mr-2">+593</span>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={user.phone}
+                    onChange={handleChange}
+                    placeholder="992468823"
+                    className="input input-bordered w-full"
+                  />
+                </div>
               </div>
 
               <div className="px-5 pr-10 mb-5">

@@ -1,24 +1,23 @@
 "use client";
 import { useEffect, useState } from "react";
 import CardDog from "./CardDog";
+import { useSession } from "@/lib/auth-client";
 
 const PanelCard = ({ data, cols }) => {
-  const [likedDogs, setLikedDogs] = useState([]);
+  const { data: session } = useSession();
+  const [user, setUser] = useState();
 
+  useEffect(() => {
+    setUser(session?.user);
+  }, [session]);
   const [colsStyle, setColsStyle] = useState("grid-cols-3");
 
   useEffect(() => {
     setColsStyle(`grid-cols-${cols}`);
   }, [cols]);
 
-  const handleLikeClick = (dogId) => {
-    setLikedDogs((prevLikedDogs) =>
-      prevLikedDogs.includes(dogId)
-        ? prevLikedDogs.filter((_id) => _id !== dogId)
-        : [...prevLikedDogs, dogId]
-    );
-  };
-
+  console.log(user?.favorites?.some((fav) => fav._id === data[0]._id));
+  console.log(data);
   return (
     <div className="flex justify-center p-4 pt-12">
       <div
@@ -30,8 +29,7 @@ const PanelCard = ({ data, cols }) => {
           <CardDog
             key={dog._id}
             dog={dog}
-            isLiked={likedDogs.includes(dog._id)}
-            onLikeClick={handleLikeClick}
+            isLiked={user?.favorites?.some((fav) => fav._id === dog._id)}
           />
         ))}
       </div>

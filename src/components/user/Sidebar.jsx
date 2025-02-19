@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { MdDashboard } from "react-icons/md";
 import { MdVerified } from "react-icons/md";
-import { FaUser, FaStar, FaHeart, FaHandsHelping, FaDashcube } from "react-icons/fa";
+import { FaUser, FaStar, FaHeart, FaHandsHelping, FaDashcube, FaDog } from "react-icons/fa";
 import { IoNotifications } from "react-icons/io5";
 import { MdOutlineExitToApp } from "react-icons/md";
 import { useSession } from "@/lib/auth-client";
@@ -69,7 +69,7 @@ const Sidebar = ({ children }) => {
                   href={"/dashboard/your-dogs"}
                   className="text-lg hover:bg-primary-focus hover:text-white rounded-lg "
                 >
-                  <FaStar size={20} />
+                  <FaDog size={20} />
                   Tus perros en adopción
                 </Link>
               </li>
