@@ -6,6 +6,9 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       dogs: { type: "string[]", defaultValue: [] },
+      phone: { type: "string", defaultValue: "" },
+      location: { type: "string", defaultValue: "" },
+      bio: { type: "string", defaultValue: "" },
     },
   },
   database: mongodbAdapter(client),

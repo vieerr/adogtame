@@ -70,20 +70,19 @@ const Dashboard = () => {
           {/* Stats Grid */}
           <div className="grid gap-4 w-4/5 grid-cols-2 shadow  bg-base-100">
             {stats.map((stat, index) => (
-              <div key={index} className="stat shadow-md rounded-2xl col-span-1 text-center">
+              <div
+                key={index}
+                className="stat shadow-md rounded-2xl col-span-1 text-center"
+              >
                 <div className="stat-title">{stat.title}</div>
                 <div className="flex flex-row justify-center items-center">
-                  <div className="stat-value text-primary mr-7">{stat.value}</div>
+                  <div className="stat-value text-primary mr-7">
+                    {stat.value}
+                  </div>
                   <div className="stat-figure text-secondary">{stat.icon}</div>
                 </div>
               </div>
             ))}
-          </div>
-
-          {/* User's Dogs Section */}
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold">Tus Perros</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
           </div>
         </div>
       )}
