@@ -18,9 +18,9 @@ const Home = () => {
     },
     {
       id: 3,
-      title: "Perreras",
+      title: "Refugios",
       icon: <GiDogHouse size={65} />,
-      route: "perreras",
+      route: "refugios",
     },
   ];
 

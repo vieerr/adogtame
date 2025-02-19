@@ -251,6 +251,7 @@ const DogDetails = ({ dog }) => {
   };
 
   const allImages = [dog.pfp, ...dog.photos].filter(Boolean);
+  console.log(allImages);
   const sizeMap = { small: "Pequeño", medium: "Mediano", big: "Grande" };
   const furMap = { short: "Corto", medium: "Medio", long: "Largo" };
   const genderMap = { male: "Macho", female: "Hembra" };
@@ -258,25 +259,25 @@ const DogDetails = ({ dog }) => {
   return (
     <div className="container mx-auto p-4 h-screen">
       {/* Carousel Section */}
-      <div className="carousel mt-5 w-full flex justify-center mb-8 h-2/4">
+      <div className="carousel mt-5 w-full mb-8 h-96 bg-gray-800 rounded-lg">
         {allImages.length > 0 ? (
           allImages.map((img, index) => (
             <div
               key={index}
               id={`slide${index}`}
-              className="carousel-item relative w-full bg-gray-800 "
+              className="carousel-item relative w-full"
             >
               <img
                 src={img}
                 alt={`${dog.name} ${index}`}
-                className="w-full object-contain rounded-lg"
+                className="w-full h-full object-contain rounded-lg"
               />
               <div className="absolute flex justify-between transform -translate-y-1/2 left-5 right-5 top-1/2">
                 <a
                   href={`#slide${
                     index === 0 ? allImages.length - 1 : index - 1
                   }`}
-                  className="btn btn-circle"
+                  className="btn btn-circle btn-sm"
                 >
                   ❮
                 </a>
@@ -284,7 +285,7 @@ const DogDetails = ({ dog }) => {
                   href={`#slide${
                     index === allImages.length - 1 ? 0 : index + 1
                   }`}
-                  className="btn btn-circle"
+                  className="btn btn-circle btn-sm"
                 >
                   ❯
                 </a>
@@ -292,8 +293,8 @@ const DogDetails = ({ dog }) => {
             </div>
           ))
         ) : (
-          <div className="w-full h-96 flex items-center justify-center bg-base-300 rounded-lg">
-            <div className="text-center">
+          <div className="w-full h-full flex items-center justify-center">
+            <div className="text-center text-white">
               <div className="text-2xl">🐾</div>
               <p className="mt-2">No hay fotos disponibles</p>
             </div>
@@ -301,6 +302,16 @@ const DogDetails = ({ dog }) => {
         )}
       </div>
 
+      {/* Navigation indicators */}
+      {allImages.length > 0 && (
+        <div className="flex justify-center w-full py-2 gap-2">
+          {allImages.map((_, index) => (
+            <a key={index} href={`#slide${index}`} className="btn btn-xs">
+              {index + 1}
+            </a>
+          ))}
+        </div>
+      )}
       <h1 className="text-3xl font-bold mb-6">{dog.name}</h1>
 
       {/* Info Section */}
@@ -452,7 +463,9 @@ const DogDetails = ({ dog }) => {
                 <div className="space-y-2 flex">
                   <div className="flex flex-col gap-2">
                     <span className="text-lg font-bold">{dog.owner?.name}</span>
-                    {dog.owner.type === user? "": (
+                    {dog.owner.type === user ? (
+                      ""
+                    ) : (
                       <div className="badge badge-secondary my-3 font-bold text-md badge-lg flex items-center">
                         {userTypeMap[user?.type]?.icon}
                         {userTypeMap[user?.type]?.label}
