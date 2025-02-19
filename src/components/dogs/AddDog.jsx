@@ -103,6 +103,7 @@ const AddDog = () => {
           userId: user.id,
           name: user.name,
           pfp: user.image,
+          type: user.type,
         },
         pfp: imageUrl,
       });
