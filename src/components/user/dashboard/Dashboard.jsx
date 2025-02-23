@@ -1,25 +1,39 @@
 "use client";
 
-import { FaBell, FaDog, FaHeart, FaHandHoldingHeart, FaUser, FaHandsHelping, FaHome } from "react-icons/fa";
+import {
+  FaBell,
+  FaDog,
+  FaHeart,
+  FaHandHoldingHeart,
+  FaUser,
+  FaHandsHelping,
+  FaHome,
+} from "react-icons/fa";
 import Image from "next/image";
 import { useSession } from "@/lib/auth-client";
 import moment from "moment";
 import { useEffect, useState } from "react";
 
 const userTypeMap = {
-  rescuer: { label: "Rescatista", icon: <FaHandsHelping className="w-4 h-4 mr-2" /> },
+  rescuer: {
+    label: "Rescatista",
+    icon: <FaHandsHelping className="w-4 h-4 mr-2" />,
+  },
   user: { label: "Usuario", icon: <FaUser className="w-4 h-4 mr-2" /> },
   shelter: { label: "Refugio", icon: <FaHome className="w-4 h-4 mr-2" /> },
 };
 
 const Dashboard = () => {
-  const { data: session } = useSession();
-
+  const { data: session, refetch } = useSession();
   const [user, setUser] = useState();
 
   useEffect(() => {
     setUser(session?.user);
   }, [session]);
+
+  useEffect(() => {
+    refetch();
+  }, []);
 
   // Convert timestamp to date using moment
   const memberSince = moment(user?.createdAt)
@@ -29,23 +43,18 @@ const Dashboard = () => {
   // Stats data
   const stats = [
     {
-      title: "Nuevas notificaciones",
-      value: 5,
-      icon: <FaBell className="w-6 h-6" />,
-    },
-    {
       title: "Perros en adopción",
-      value: 3,
+      value: user?.dogs.length,
       icon: <FaDog className="w-6 h-6" />,
     },
     {
       title: "Perros como favoritos",
-      value: 15,
+      value: user?.favorites.length,
       icon: <FaHeart className="w-6 h-6" />,
     },
     {
       title: "Perros patrocinados",
-      value: 7,
+      value: user?.sponsored.length,
       icon: <FaHandHoldingHeart className="w-6 h-6" />,
     },
   ];
@@ -79,7 +88,7 @@ const Dashboard = () => {
           </div>
 
           {/* Stats Grid */}
-          <div className="grid gap-4 w-4/5 grid-cols-2 shadow  bg-base-100">
+          <div className="grid gap-4 w-4/5 grid-cols-3 shadow  bg-base-100">
             {stats.map((stat, index) => (
               <div
                 key={index}
